@@ -20,7 +20,7 @@ public class InputBar extends JPanel implements ActionListener {
 	private JFormattedTextField fEg, fme, fmh, fT1, fT2, fEd1, fEd2, fNd1, fNd2;
 	private JCheckBox flogScale, freverseT;
 	private Parameters params;
-	public static final int defaultHeight = 800, defaultWidth = 200;
+	public static final int defaultHeight = 400, defaultWidth = 400;
 	
 	private JFormattedTextField createDoubleField(String label, double value)
 	{

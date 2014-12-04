@@ -10,6 +10,12 @@ public class Parameters extends Observable {
 	private HashMap<BooleanParameterName, Boolean> boolVals;
 	private Function func;
 	
+	public Parameters()
+	{
+		doubleVals = new HashMap<>();
+		boolVals = new HashMap<>();
+	}
+	
 	public Function getFunction() {
 		return func;
 	}
