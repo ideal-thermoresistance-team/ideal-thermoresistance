@@ -7,3 +7,7 @@ target/
 
 # ignore all files ending with ~
 *~ 
+
+.settings
+RemoteSystemTempFiles/
+.metadata
