@@ -1,5 +1,6 @@
 package ideal_thermoresistance.parameters;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Observable;
 
@@ -9,6 +10,7 @@ public class Parameters extends Observable {
 	private HashMap<DoubleParameterName, Double> doubleVals;
 	private HashMap<BooleanParameterName, Boolean> boolVals;
 	private Function func;
+	
 	
 	public Parameters()
 	{

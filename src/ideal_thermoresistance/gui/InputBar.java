@@ -4,6 +4,9 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -21,11 +24,18 @@ public class InputBar extends JPanel implements ActionListener {
 	private JCheckBox flogScale, freverseT;
 	private Parameters params;
 	public static final int defaultHeight = 400, defaultWidth = 400;
+	private static DecimalFormat format;
+	
+	static{
+		format = (DecimalFormat) NumberFormat.getInstance(Locale.ENGLISH); 
+		format.applyPattern("0.#########E0");
+	}
 	
 	private JFormattedTextField createDoubleField(String label, double value)
 	{
 		add(new JLabel(label));
-		JFormattedTextField result = new JFormattedTextField(new Double(value));
+		JFormattedTextField result = new JFormattedTextField(format);
+		result.setValue(value);
 		add(result);
 		return result;
 	}
