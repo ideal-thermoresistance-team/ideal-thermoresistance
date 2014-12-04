@@ -6,10 +6,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.HashMap;
 import java.util.Locale;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -18,10 +20,13 @@ import javax.swing.JPanel;
 import ideal_thermoresistance.parameters.BooleanParameterName;
 import ideal_thermoresistance.parameters.DoubleParameterName;
 import ideal_thermoresistance.parameters.Parameters;
+import ideal_thermoresistance.parameters.Unit;
 
 public class InputBar extends JPanel implements ActionListener {
-	private JFormattedTextField fEg, fme, fmh, fT1, fT2, fEd1, fEd2, fNd1, fNd2;
-	private JCheckBox flogScale, freverseT;
+	private HashMap<DoubleParameterName, JFormattedTextField> doubleFields;
+	private HashMap<DoubleParameterName, JComboBox<Unit>> doubleUnits;
+	private HashMap<BooleanParameterName, JCheckBox> booleanFields;
+	
 	private Parameters params;
 	public static final int defaultHeight = 400, defaultWidth = 400;
 	private static DecimalFormat format;
@@ -31,25 +36,35 @@ public class InputBar extends JPanel implements ActionListener {
 		format.applyPattern("0.#########E0");
 	}
 	
-	private JFormattedTextField createDoubleField(String label, double value)
+	private void createDoubleField(DoubleParameterName name, String label, double value, Unit[] units)
 	{
 		add(new JLabel(label));
-		JFormattedTextField result = new JFormattedTextField(format);
-		result.setValue(value);
-		add(result);
-		return result;
+		JFormattedTextField field = new JFormattedTextField(format);
+		field.setValue(value);
+		add(field);
+		JComboBox<Unit> unit = new JComboBox<Unit>(units);
+		add(unit);
+		
+		doubleFields.put(name, field);
+		doubleUnits.put(name, unit);
 	}
 	
-	private JCheckBox createBooleanField(String label, boolean value)
+	private void createBooleanField(BooleanParameterName name, String label, boolean value)
 	{
 		JCheckBox result = new JCheckBox(label, value);
 		add(result);
-		return result;
+		booleanFields.put(name, result);
 	}
 	
-	private double getDouble(JFormattedTextField f)
+	private double getDouble(DoubleParameterName name)
 	{
-		return ((Number)f.getValue()).doubleValue();
+		return ((Number)doubleFields.get(name).getValue()).doubleValue() * 
+				((Unit)doubleUnits.get(name).getSelectedItem()).value();
+	}
+	
+	private boolean getBoolean(BooleanParameterName name)
+	{
+		return booleanFields.get(name).getSelectedObjects() != null;
 	}
 	
 	private JButton createButton(String label, String action)
@@ -67,20 +82,26 @@ public class InputBar extends JPanel implements ActionListener {
 	
 	public InputBar(Parameters params)
 	{
+		doubleFields = new HashMap<>();
+		doubleUnits = new HashMap<>();
+		booleanFields = new HashMap<>();
+		
 		this.params = params;
-		setLayout(new GridLayout(0, 2));
+		setLayout(new GridLayout(0, 3));
 		setPreferredSize(new Dimension(defaultWidth, defaultHeight));
-		fEg = createDoubleField("Energy gap", params.getDouble(DoubleParameterName.Eg));
-		fme = createDoubleField("Effective electron mass", params.getDouble(DoubleParameterName.me));
-		fmh = createDoubleField("Effective hole mass", params.getDouble(DoubleParameterName.mh));
-		fEd1 = createDoubleField("Donor 1 energy", params.getDouble(DoubleParameterName.Ed1));
-		fNd1 = createDoubleField("Donor 1 concentration", params.getDouble(DoubleParameterName.Nd1));
-		fEd2 = createDoubleField("Donor 2 energy", params.getDouble(DoubleParameterName.Ed2));
-		fNd2 = createDoubleField("Donor 2 concentration", params.getDouble(DoubleParameterName.Nd2));
-		fT1 = createDoubleField("Starting temperature", params.getDouble(DoubleParameterName.T1));
-		fT2 = createDoubleField("Ending temperature", params.getDouble(DoubleParameterName.T2));
-		freverseT = createBooleanField("1/T", params.getBoolean(BooleanParameterName.reverseT));
-		flogScale = createBooleanField("Logarithmic scale", params.getBoolean(BooleanParameterName.logScale));
+		createDoubleField(DoubleParameterName.Eg, "Energy gap", 
+				params.getDouble(DoubleParameterName.Eg), Unit.energy);
+		createDoubleField(DoubleParameterName.me, "Effective electron mass", 
+				params.getDouble(DoubleParameterName.me), Unit.mass);
+		createDoubleField(DoubleParameterName.mh, "Effective hole mass", params.getDouble(DoubleParameterName.mh), Unit.mass);
+		createDoubleField(DoubleParameterName.Ed1, "Donor 1 energy", params.getDouble(DoubleParameterName.Ed1), Unit.energy);
+		createDoubleField(DoubleParameterName.Nd1, "Donor 1 concentration", params.getDouble(DoubleParameterName.Nd1), Unit.concentration);
+		createDoubleField(DoubleParameterName.Ed2, "Donor 2 energy", params.getDouble(DoubleParameterName.Ed2), Unit.energy);
+		createDoubleField(DoubleParameterName.Nd2, "Donor 2 concentration", params.getDouble(DoubleParameterName.Nd2), Unit.concentration);
+		createDoubleField(DoubleParameterName.T1, "Starting temperature", params.getDouble(DoubleParameterName.T1), Unit.temperature);
+		createDoubleField(DoubleParameterName.T2, "Ending temperature", params.getDouble(DoubleParameterName.T2), Unit.temperature);
+		createBooleanField(BooleanParameterName.reverseT, "1/T", params.getBoolean(BooleanParameterName.reverseT));
+		createBooleanField(BooleanParameterName.logScale, "Logarithmic scale", params.getBoolean(BooleanParameterName.logScale));
 		createButton("Apply", "apply");
 	}
 	
@@ -92,15 +113,15 @@ public class InputBar extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("apply"))
 		{
-			double Eg = getDouble(fEg);
-			double me = getDouble(fEg);
-			double mh = getDouble(fEg);
-			double Ed1 = getDouble(fEg);
-			double Ed2 = getDouble(fEg);
-			double Nd1 = getDouble(fEg);
-			double Nd2 = getDouble(fEg);
-			double T1 = getDouble(fEg);
-			double T2 = getDouble(fEg);
+			double Eg = getDouble(DoubleParameterName.Eg);
+			double me = getDouble(DoubleParameterName.me);
+			double mh = getDouble(DoubleParameterName.mh);
+			double Ed1 = getDouble(DoubleParameterName.Ed1);
+			double Ed2 = getDouble(DoubleParameterName.Ed2);
+			double Nd1 = getDouble(DoubleParameterName.Nd1);
+			double Nd2 = getDouble(DoubleParameterName.Nd2);
+			double T1 = getDouble(DoubleParameterName.T1);
+			double T2 = getDouble(DoubleParameterName.T2);
 			
 			if (Eg <= 0)
 			{
@@ -141,8 +162,8 @@ public class InputBar extends JPanel implements ActionListener {
 			params.setDouble(DoubleParameterName.mh, mh);
 			params.setDouble(DoubleParameterName.T1, T1);
 			params.setDouble(DoubleParameterName.T2, T2);
-			params.setBoolean(BooleanParameterName.logScale, flogScale.getSelectedObjects() != null);
-			params.setBoolean(BooleanParameterName.reverseT, freverseT.getSelectedObjects() != null);
+			params.setBoolean(BooleanParameterName.logScale, getBoolean(BooleanParameterName.logScale));
+			params.setBoolean(BooleanParameterName.reverseT, getBoolean(BooleanParameterName.reverseT));
 			params.update();
 			
 		}
