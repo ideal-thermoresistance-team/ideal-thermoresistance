@@ -122,6 +122,18 @@ public class InputBar extends JPanel implements ActionListener {
 				error("Starting temperature should be less than ending temperature");
 				return;
 			}
+			params.setDouble(DoubleParameterName.Eg, Eg);
+			params.setDouble(DoubleParameterName.Ed1, Ed1);
+			params.setDouble(DoubleParameterName.Ed2, Ed2);
+			params.setDouble(DoubleParameterName.Nd1, Nd1);
+			params.setDouble(DoubleParameterName.Nd2, Nd2);
+			params.setDouble(DoubleParameterName.me, me);
+			params.setDouble(DoubleParameterName.mh, mh);
+			params.setDouble(DoubleParameterName.T1, T1);
+			params.setDouble(DoubleParameterName.T2, T2);
+			params.setBoolean(BooleanParameterName.logScale, flogScale.getSelectedObjects() != null);
+			params.setBoolean(BooleanParameterName.reverseT, freverseT.getSelectedObjects() != null);
+			params.update();
 			
 		}
 		
