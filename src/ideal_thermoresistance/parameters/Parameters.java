@@ -6,10 +6,10 @@ public class Parameters {
 	public Function getFunction() {
 		return null;
 	}
-	public double getDouble(ParameterName name) {
+	public double getDouble(DoubleParameterName name) {
 		return 0;
 	}
-	public boolean getBoolean(ParameterName name) {
+	public boolean getBoolean(BooleanParameterName name) {
 		return false;
 	}
 }

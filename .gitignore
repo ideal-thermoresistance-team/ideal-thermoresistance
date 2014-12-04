@@ -9,5 +9,5 @@ target/
 *~ 
 
 .settings
-RemoteSystemTempFiles/
+RemoteSystemsTempFiles/
 .metadata
