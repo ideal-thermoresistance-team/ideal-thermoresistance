@@ -28,7 +28,7 @@ public class InputBar extends JPanel implements ActionListener {
 	private HashMap<BooleanParameterName, JCheckBox> booleanFields;
 	
 	private Parameters params;
-	public static final int defaultHeight = 400, defaultWidth = 400;
+	public static final int defaultHeight = 300, defaultWidth = 400;
 	private static DecimalFormat format;
 	
 	static{
@@ -72,6 +72,7 @@ public class InputBar extends JPanel implements ActionListener {
 		JButton result = new JButton(label);
 		result.setActionCommand(action);
 		add(result);
+		result.addActionListener(this);
 		return result;
 	}
 	
@@ -100,6 +101,10 @@ public class InputBar extends JPanel implements ActionListener {
 		createDoubleField(DoubleParameterName.Nd2, "Donor 2 concentration", params.getDouble(DoubleParameterName.Nd2), Unit.concentration);
 		createDoubleField(DoubleParameterName.T1, "Starting temperature", params.getDouble(DoubleParameterName.T1), Unit.temperature);
 		createDoubleField(DoubleParameterName.T2, "Ending temperature", params.getDouble(DoubleParameterName.T2), Unit.temperature);
+		createDoubleField(DoubleParameterName.Cn, "Cn", params.getDouble(DoubleParameterName.Cn), Unit.temperature);
+		createDoubleField(DoubleParameterName.Cp, "Cp", params.getDouble(DoubleParameterName.Cp), Unit.temperature);
+		createDoubleField(DoubleParameterName.T0n, "T0n", params.getDouble(DoubleParameterName.T0n), Unit.temperature);
+		createDoubleField(DoubleParameterName.T0p, "T0p", params.getDouble(DoubleParameterName.T0p), Unit.temperature);
 		createBooleanField(BooleanParameterName.reverseT, "1/T", params.getBoolean(BooleanParameterName.reverseT));
 		createBooleanField(BooleanParameterName.logScale, "Logarithmic scale", params.getBoolean(BooleanParameterName.logScale));
 		createButton("Apply", "apply");
@@ -122,6 +127,10 @@ public class InputBar extends JPanel implements ActionListener {
 			double Nd2 = getDouble(DoubleParameterName.Nd2);
 			double T1 = getDouble(DoubleParameterName.T1);
 			double T2 = getDouble(DoubleParameterName.T2);
+			double Cn = getDouble(DoubleParameterName.Cn);
+			double Cp = getDouble(DoubleParameterName.Cp);
+			double T0n = getDouble(DoubleParameterName.T0n);
+			double T0p = getDouble(DoubleParameterName.T0p);
 			
 			if (Eg <= 0)
 			{
@@ -143,7 +152,7 @@ public class InputBar extends JPanel implements ActionListener {
 				error("Donor concentrations should be at least 0");
 				return;
 			}
-			if (T1 < 0 || T2 < 0)
+			if (T1 < 0 || T2 < 0 || T0n < 0 || T0p < 0)
 			{
 				error("Temperatures should be bigger than 0K");
 				return;
@@ -162,6 +171,10 @@ public class InputBar extends JPanel implements ActionListener {
 			params.setDouble(DoubleParameterName.mh, mh);
 			params.setDouble(DoubleParameterName.T1, T1);
 			params.setDouble(DoubleParameterName.T2, T2);
+			params.setDouble(DoubleParameterName.Cn, Cn);
+			params.setDouble(DoubleParameterName.Cp, Cp);
+			params.setDouble(DoubleParameterName.T0n, T0n);
+			params.setDouble(DoubleParameterName.T0p, T0p);
 			params.setBoolean(BooleanParameterName.logScale, getBoolean(BooleanParameterName.logScale));
 			params.setBoolean(BooleanParameterName.reverseT, getBoolean(BooleanParameterName.reverseT));
 			params.update();

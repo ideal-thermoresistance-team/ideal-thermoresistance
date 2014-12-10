@@ -23,6 +23,11 @@ public class Main extends JFrame{
 		params.setDouble(DoubleParameterName.T1, 1);
 		params.setDouble(DoubleParameterName.T2, 1);
 		
+		params.setDouble(DoubleParameterName.Cn, 1);
+		params.setDouble(DoubleParameterName.Cp, 1);
+		params.setDouble(DoubleParameterName.T0n, 1);
+		params.setDouble(DoubleParameterName.T0p, 1);
+		
 		params.setBoolean(BooleanParameterName.logScale, false);
 		params.setBoolean(BooleanParameterName.reverseT, false);
 		
