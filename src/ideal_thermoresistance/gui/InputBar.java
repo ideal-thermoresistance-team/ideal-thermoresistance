@@ -23,6 +23,7 @@ import ideal_thermoresistance.parameters.Parameters;
 import ideal_thermoresistance.parameters.Unit;
 
 public class InputBar extends JPanel implements ActionListener {
+	private static final long serialVersionUID = 1L;
 	private HashMap<DoubleParameterName, JFormattedTextField> doubleFields;
 	private HashMap<DoubleParameterName, JComboBox<Unit>> doubleUnits;
 	private HashMap<BooleanParameterName, JCheckBox> booleanFields;

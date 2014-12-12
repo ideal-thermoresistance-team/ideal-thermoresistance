@@ -2,19 +2,21 @@ package ideal_thermoresistance;
 
 import javax.swing.JFrame;
 
-import ideal_thermoresistance.functions.ElectronsConcentration;
+import ideal_thermoresistance.gui.GraphPane;
 import ideal_thermoresistance.gui.InputBar;
 import ideal_thermoresistance.parameters.BooleanParameterName;
 import ideal_thermoresistance.parameters.DoubleParameterName;
 import ideal_thermoresistance.parameters.Parameters;
 
 public class Main extends JFrame{
-
+	private static final long serialVersionUID = 1L;
+	Parameters params;
+	GraphPane graph;
 	public Main()
 	{
 		double m0 = 9.1e-28;
 		
-		Parameters params = new Parameters();
+		params = new Parameters();
 		// NOTE: The real value for Eg is 1.21 * 1.6e-12
 		params.setDouble(DoubleParameterName.Eg, 1.21 * 1.6e-12);
 		params.setDouble(DoubleParameterName.Ed1, 1e-13);
@@ -36,6 +38,8 @@ public class Main extends JFrame{
 		params.setBoolean(BooleanParameterName.reverseT, false);
 		
 		add(new InputBar(params));
+		graph = new GraphPane(params);
+		params.addObserver(graph);
 		pack();
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}

@@ -1,6 +1,5 @@
 package ideal_thermoresistance.parameters;
 
-import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Observable;
 
