@@ -5,7 +5,7 @@ import ideal_thermoresistance.parameters.Parameters;
 
 /**
  * Attention! The function returns not the actual fermi level, but exp(mu / (k*T)).
- * This is done to avoid unnecessary  
+ * This is done to avoid unnecessary calculations.
  */
 public class FermiLevel implements Function {
 	
