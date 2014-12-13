@@ -4,6 +4,7 @@ import ideal_thermoresistance.functions.ElectronsConcentration;
 import ideal_thermoresistance.functions.FermiLevel;
 import ideal_thermoresistance.functions.Function;
 import ideal_thermoresistance.functions.Resistance;
+import ideal_thermoresistance.parameters.BooleanParameterName;
 import ideal_thermoresistance.parameters.DoubleParameterName;
 import ideal_thermoresistance.parameters.Parameters;
 
@@ -47,22 +48,52 @@ public class GraphPane extends JFrame implements Observer {
 	}
 	
 	private void recompute() {
+		pResistance.removeAll();
+		pElectronsConcentration.removeAll();
+		pFermi.removeAll();
 		pResistance.add(makePanel(new Resistance(), "R"));
 	    pElectronsConcentration.add(makePanel(new ElectronsConcentration(), "N"));
 	    pFermi.add(makePanel(new FermiLevel(), "F"));
 	}
 	
 	private ChartPanel makePanel(Function func, String str) {
-		XYSeries seriesEC = new XYSeries(str + "(T)");
-	    for(double i = params.getDouble(DoubleParameterName.T1); i < params.getDouble(DoubleParameterName.T2); i+=10){
-	      seriesEC.add(i, func.compute(params, i));
-	      System.out.println(func.compute(params, i));
+		XYSeries series;
+		String chartStr = str + " = " + str + "(T)", strT = "T", strFunc = str;
+	    if (params.getBoolean(BooleanParameterName.reverseT)) {
+	    	strT = "1/T";
+	    	if (params.getBoolean(BooleanParameterName.logScale)) {
+	    		chartStr = "log(" + str + "(1/T))"; strFunc = "log(" + str + ")";
+	    		series = new XYSeries(chartStr); 
+	    		for(double i = params.getDouble(DoubleParameterName.T2); i >= params.getDouble(DoubleParameterName.T1); i-=10){
+	    			series.add(1/i, Math.log(func.compute(params, i)));
+	    		}
+	    	} else {
+	    		chartStr = str + "(1/T)";
+	    		series = new XYSeries(chartStr); 
+	    		for(double i = params.getDouble(DoubleParameterName.T2); i >= params.getDouble(DoubleParameterName.T1); i-=10){
+	    			series.add(1/i, func.compute(params, i));
+	    		}
+	    	}
+	    } else {
+	    	if (params.getBoolean(BooleanParameterName.logScale)) {
+	    		chartStr = "log(" + str + "(T))"; strFunc = "log(" + str + ")";
+	    		series = new XYSeries(str + "(T)"); 
+	    		for(double i = params.getDouble(DoubleParameterName.T1); i < params.getDouble(DoubleParameterName.T2); i+=10){
+		    		series.add(i, Math.log(func.compute(params, i)));
+	    		}
+		    } else {
+		    	chartStr = str + "(T)";
+		    	series = new XYSeries(chartStr);
+	    		for(double i = params.getDouble(DoubleParameterName.T1); i < params.getDouble(DoubleParameterName.T2); i+=10){
+		    		series.add(i, func.compute(params, i));
+		    	}
+	    	}
 	    }
-	    System.out.println("end of " + str);
-	    XYDataset xyDatasetEC = new XYSeriesCollection(seriesEC);
-	    JFreeChart chartEC = ChartFactory
-	        .createXYLineChart(str + " = " + str + "(T)", "T", str, xyDatasetEC, PlotOrientation.VERTICAL, true, true, true);
-	    return new ChartPanel(chartEC);
+	    
+	    XYDataset xyDataset = new XYSeriesCollection(series);
+	    JFreeChart chart = ChartFactory
+	        .createXYLineChart(chartStr, strT, strFunc, xyDataset, PlotOrientation.VERTICAL, true, true, true);
+	    return new ChartPanel(chart);
 	}
 
 	@Override

@@ -18,7 +18,7 @@ public class Main extends JFrame{
 		
 		params = new Parameters();
 		// NOTE: The real value for Eg is 1.21 * 1.6e-12
-		params.setDouble(DoubleParameterName.Eg, 1.21 * 1.6e-12);
+		params.setDouble(DoubleParameterName.Eg, 1.21 * 1.6e-13);
 		params.setDouble(DoubleParameterName.Ed1, 1e-13);
 		params.setDouble(DoubleParameterName.Ed2, 1e-13);
 		params.setDouble(DoubleParameterName.Nd1, 1.5e10);
