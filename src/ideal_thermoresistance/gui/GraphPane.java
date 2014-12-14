@@ -8,6 +8,8 @@ import ideal_thermoresistance.parameters.BooleanParameterName;
 import ideal_thermoresistance.parameters.DoubleParameterName;
 import ideal_thermoresistance.parameters.Parameters;
 
+import java.awt.GridLayout;
+import java.text.DecimalFormat;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -18,7 +20,10 @@ import javax.swing.JTabbedPane;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -37,9 +42,9 @@ public class GraphPane extends JFrame implements Observer {
 		setTitle("Graph");
 		tp = new JTabbedPane();
 		getContentPane().add(tp);
-		pElectronsConcentration = new JPanel();
-		pResistance  = new JPanel();
-		pFermi = new JPanel();
+		pElectronsConcentration = initPanel();
+		pResistance  = initPanel();
+		pFermi = initPanel();
 		tp.addTab("EC", pElectronsConcentration);
 		tp.addTab("R", pResistance);
 		tp.addTab("F", pFermi);
@@ -47,12 +52,18 @@ public class GraphPane extends JFrame implements Observer {
 		setSize(700, 500);
 	}
 	
+	private JPanel initPanel() {
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridLayout());
+		return panel;
+	}
+
 	private void recompute() {
 		pResistance.removeAll();
 		pElectronsConcentration.removeAll();
 		pFermi.removeAll();
+		pElectronsConcentration.add(makePanel(new ElectronsConcentration(), "N"));
 		pResistance.add(makePanel(new Resistance(), "R"));
-	    pElectronsConcentration.add(makePanel(new ElectronsConcentration(), "N"));
 	    pFermi.add(makePanel(new FermiLevel(), "F"));
 	}
 	
@@ -93,7 +104,16 @@ public class GraphPane extends JFrame implements Observer {
 	    XYDataset xyDataset = new XYSeriesCollection(series);
 	    JFreeChart chart = ChartFactory
 	        .createXYLineChart(chartStr, strT, strFunc, xyDataset, PlotOrientation.VERTICAL, true, true, true);
-	    return new ChartPanel(chart);
+	    XYPlot plot = (XYPlot) chart.getPlot();
+	    NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
+	    yAxis.setRange(series.getMinY(), series.getMaxY());
+	    // FIXME: Due to the unexpected behavior of JFreeChart (not showing the Y axis values for too big numbers),
+	    // the number of ticks on the vertical axis is set to 15.
+	    yAxis.setTickUnit(new NumberTickUnit(yAxis.getRange().getLength() / 15, new DecimalFormat("##0.#####E0")));
+	    
+	    ChartPanel panel = new ChartPanel(chart);
+	    
+	    return panel;
 	}
 
 	@Override
