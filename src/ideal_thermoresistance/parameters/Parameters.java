@@ -6,7 +6,7 @@ import java.util.Observable;
 import ideal_thermoresistance.functions.Function;
 
 public class Parameters extends Observable {
-	private HashMap<DoubleParameterName, Double> doubleVals;
+	private HashMap<DoubleParameterName, DoubleParameterEntry> doubleVals;
 	private HashMap<BooleanParameterName, Boolean> boolVals;
 	private Function func;
 	
@@ -21,8 +21,14 @@ public class Parameters extends Observable {
 		return func;
 	}
 	public double getDouble(DoubleParameterName name) {
+		return doubleVals.get(name).compute();
+	}
+	
+	public DoubleParameterEntry getDoubleEntry(DoubleParameterName name)
+	{
 		return doubleVals.get(name);
 	}
+	
 	public boolean getBoolean(BooleanParameterName name) {
 		return boolVals.get(name);
 	}
@@ -32,9 +38,17 @@ public class Parameters extends Observable {
 		func = function;
 	}
 	
-	public void setDouble(DoubleParameterName name, double value)
+	public void setDouble(DoubleParameterName name, double value, int unit)
 	{
-		doubleVals.put(name, value);
+		DoubleParameterEntry d = doubleVals.get(name);
+		if (d == null)
+		{
+			d = new DoubleParameterEntry(name, unit);
+			d.setValue(value);
+			doubleVals.put(name, d);
+		}
+		d.setValue(value);
+		d.setUnit(unit);
 	}
 	
 	public void setBoolean(BooleanParameterName name, boolean value)

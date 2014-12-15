@@ -19,6 +19,7 @@ import javax.swing.JOptionPane;
 import ideal_thermoresistance.gui.GraphPane;
 import ideal_thermoresistance.gui.InputBar;
 import ideal_thermoresistance.parameters.BooleanParameterName;
+import ideal_thermoresistance.parameters.DoubleParameterEntry;
 import ideal_thermoresistance.parameters.DoubleParameterName;
 import ideal_thermoresistance.parameters.Parameters;
 import ideal_thermoresistance.parameters.Unit;
@@ -47,7 +48,7 @@ public class Main extends JFrame implements ActionListener{
 		item.addActionListener(this);
 		menu.add(item);
 		
-		menu = new JMenu("Parameters");
+		menu = new JMenu("Materials");
 		bar.add(menu);
 		
 		item = new JMenuItem("Silicon");
@@ -68,12 +69,12 @@ public class Main extends JFrame implements ActionListener{
 		params = new Parameters();
 		
 		
-		params.setDouble(DoubleParameterName.Ed1, 1e-13);
-		params.setDouble(DoubleParameterName.Ed2, 1e-13);
-		params.setDouble(DoubleParameterName.Nd1, 1.5e10);
-		params.setDouble(DoubleParameterName.Nd2, 2.4e10);
-		params.setDouble(DoubleParameterName.T1, 200);
-		params.setDouble(DoubleParameterName.T2, 400);
+		params.setDouble(DoubleParameterName.Ed1, 0.1, Unit.eV.getPos());
+		params.setDouble(DoubleParameterName.Ed2, 0.1, Unit.eV.getPos());
+		params.setDouble(DoubleParameterName.Nd1, 1.5e10, Unit.reverse_cm3.getPos());
+		params.setDouble(DoubleParameterName.Nd2, 2.4e10, Unit.reverse_cm3.getPos());
+		params.setDouble(DoubleParameterName.T1, 200, Unit.K.getPos());
+		params.setDouble(DoubleParameterName.T2, 400, Unit.K.getPos());
 		
 		params.setBoolean(BooleanParameterName.logScale, false);
 		params.setBoolean(BooleanParameterName.reverseT, false);
@@ -96,29 +97,29 @@ public class Main extends JFrame implements ActionListener{
 	
 	public void loadSiliconParams()
 	{
-		params.setDouble(DoubleParameterName.Eg, 1.21 * 1.6e-12);
+		params.setDouble(DoubleParameterName.Eg, 1.12, Unit.eV.getPos());
 		
-		params.setDouble(DoubleParameterName.me, 1.08 * m0);
-		params.setDouble(DoubleParameterName.mh, 0.56 * m0);
+		params.setDouble(DoubleParameterName.me, 0.98, Unit.me.getPos());
+		params.setDouble(DoubleParameterName.mh, 0.49, Unit.me.getPos());
 				
-		params.setDouble(DoubleParameterName.Cn, 1);
-		params.setDouble(DoubleParameterName.Cp, 1);
-		params.setDouble(DoubleParameterName.T0n, 1);
-		params.setDouble(DoubleParameterName.T0p, 1);
+		params.setDouble(DoubleParameterName.Cn, 1, Unit.constants.getPos());
+		params.setDouble(DoubleParameterName.Cp, 1, Unit.constants.getPos());
+		params.setDouble(DoubleParameterName.T0n, 1, Unit.K.getPos());
+		params.setDouble(DoubleParameterName.T0p, 1, Unit.K.getPos());
 		params.update();
 	}
 	
 	public void loadGermaniumParams()
 	{
-		params.setDouble(DoubleParameterName.Eg, 0.661 * 1.6e-12);
-
-		params.setDouble(DoubleParameterName.me, 1.6 * m0);
-		params.setDouble(DoubleParameterName.mh, 0.33 * m0);
+		params.setDouble(DoubleParameterName.Eg, 0.661, Unit.eV.getPos());
 		
-		params.setDouble(DoubleParameterName.Cn, 1);
-		params.setDouble(DoubleParameterName.Cp, 1);
-		params.setDouble(DoubleParameterName.T0n, 1);
-		params.setDouble(DoubleParameterName.T0p, 1);
+		params.setDouble(DoubleParameterName.me, 1.6, Unit.me.getPos());
+		params.setDouble(DoubleParameterName.mh, 0.33, Unit.me.getPos());
+				
+		params.setDouble(DoubleParameterName.Cn, 1, Unit.constants.getPos());
+		params.setDouble(DoubleParameterName.Cp, 1, Unit.constants.getPos());
+		params.setDouble(DoubleParameterName.T0n, 1, Unit.K.getPos());
+		params.setDouble(DoubleParameterName.T0p, 1, Unit.K.getPos());
 		params.update();
 	}
 	
@@ -126,13 +127,17 @@ public class Main extends JFrame implements ActionListener{
 			DoubleParameterName name)
 	{
 		double d = scanner.nextDouble();
-		params.setDouble(name, d);
+		int i = scanner.nextInt();
+		params.setDouble(name, d, i);
 	}
 	
 	public void writeDouble(FileWriter writer, 
 			DoubleParameterName name) throws IOException
 	{
-		writer.write(Double.toString(params.getDouble(name)));
+		DoubleParameterEntry e = params.getDoubleEntry(name);
+		writer.write(Double.toString(e.getValue()));
+		writer.write(' ');
+		writer.write(Integer.toString(e.getUnit()));
 		writer.write('\n');
 	}
 	

@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 
 import ideal_thermoresistance.functions.ElectronsConcentration;
 import ideal_thermoresistance.parameters.BooleanParameterName;
+import ideal_thermoresistance.parameters.DoubleParameterEntry;
 import ideal_thermoresistance.parameters.DoubleParameterName;
 import ideal_thermoresistance.parameters.Parameters;
 import ideal_thermoresistance.parameters.Unit;
@@ -40,30 +41,50 @@ public class InputBar extends JPanel implements ActionListener, Observer {
 		format.applyPattern("0.#########E0");
 	}
 	
-	private void createDoubleField(DoubleParameterName name, String label, double value, Unit[] units)
+	private void createDoubleField(DoubleParameterName name, String label)
 	{
+		double value = params.getDouble(name);
 		add(new JLabel(label));
+		
 		JFormattedTextField field = new JFormattedTextField(format);
 		field.setValue(value);
 		add(field);
-		JComboBox<Unit> unit = new JComboBox<Unit>(units);
+		
+		JComboBox<Unit> unit = new JComboBox<Unit>(name.units);
+		unit.setSelectedIndex(params.getDoubleEntry(name).getUnit());
 		add(unit);
 		
 		doubleFields.put(name, field);
 		doubleUnits.put(name, unit);
 	}
 	
-	private void createBooleanField(BooleanParameterName name, String label, boolean value)
+	private void createBooleanField(BooleanParameterName name, String label)
 	{
+		boolean value = params.getBoolean(name);
 		JCheckBox result = new JCheckBox(label, value);
 		add(result);
 		booleanFields.put(name, result);
 	}
 	
+	private double getDoubleWithoutConversion(DoubleParameterName name)
+	{
+		return ((Number)doubleFields.get(name).getValue()).doubleValue();
+	}
+	
+	private Unit getUnit(DoubleParameterName name)
+	{
+		return ((Unit)doubleUnits.get(name).getSelectedItem());
+	}
+	
 	private double getDouble(DoubleParameterName name)
 	{
-		return ((Number)doubleFields.get(name).getValue()).doubleValue() * 
-				((Unit)doubleUnits.get(name).getSelectedItem()).value();
+		return getDoubleWithoutConversion(name) * 
+				getUnit(name).value();
+	}
+	
+	private void updateEntry(DoubleParameterName name)
+	{
+		params.setDouble(name, getDoubleWithoutConversion(name), getUnit(name).getPos());
 	}
 	
 	private boolean getBoolean(BooleanParameterName name)
@@ -95,23 +116,21 @@ public class InputBar extends JPanel implements ActionListener, Observer {
 		params.addObserver(this);
 		setLayout(new GridLayout(0, 3));
 		setPreferredSize(new Dimension(defaultWidth, defaultHeight));
-		createDoubleField(DoubleParameterName.Eg, "Energy gap", 
-				params.getDouble(DoubleParameterName.Eg), Unit.energy);
-		createDoubleField(DoubleParameterName.me, "Effective electron mass", 
-				params.getDouble(DoubleParameterName.me), Unit.mass);
-		createDoubleField(DoubleParameterName.mh, "Effective hole mass", params.getDouble(DoubleParameterName.mh), Unit.mass);
-		createDoubleField(DoubleParameterName.Ed1, "Donor 1 energy", params.getDouble(DoubleParameterName.Ed1), Unit.energy);
-		createDoubleField(DoubleParameterName.Nd1, "Donor 1 concentration", params.getDouble(DoubleParameterName.Nd1), Unit.concentration);
-		createDoubleField(DoubleParameterName.Ed2, "Donor 2 energy", params.getDouble(DoubleParameterName.Ed2), Unit.energy);
-		createDoubleField(DoubleParameterName.Nd2, "Donor 2 concentration", params.getDouble(DoubleParameterName.Nd2), Unit.concentration);
-		createDoubleField(DoubleParameterName.T1, "Starting temperature", params.getDouble(DoubleParameterName.T1), Unit.temperature);
-		createDoubleField(DoubleParameterName.T2, "Ending temperature", params.getDouble(DoubleParameterName.T2), Unit.temperature);
-		createDoubleField(DoubleParameterName.Cn, "Cn", params.getDouble(DoubleParameterName.Cn), Unit.temperature);
-		createDoubleField(DoubleParameterName.Cp, "Cp", params.getDouble(DoubleParameterName.Cp), Unit.temperature);
-		createDoubleField(DoubleParameterName.T0n, "T0n", params.getDouble(DoubleParameterName.T0n), Unit.temperature);
-		createDoubleField(DoubleParameterName.T0p, "T0p", params.getDouble(DoubleParameterName.T0p), Unit.temperature);
-		createBooleanField(BooleanParameterName.reverseT, "1/T", params.getBoolean(BooleanParameterName.reverseT));
-		createBooleanField(BooleanParameterName.logScale, "Logarithmic scale", params.getBoolean(BooleanParameterName.logScale));
+		createDoubleField(DoubleParameterName.Eg, "Energy gap");
+		createDoubleField(DoubleParameterName.me, "Effective electron mass");
+		createDoubleField(DoubleParameterName.mh, "Effective hole mass");
+		createDoubleField(DoubleParameterName.Ed1, "Donor 1 energy");
+		createDoubleField(DoubleParameterName.Nd1, "Donor 1 concentration");
+		createDoubleField(DoubleParameterName.Ed2, "Donor 2 energy");
+		createDoubleField(DoubleParameterName.Nd2, "Donor 2 concentration");
+		createDoubleField(DoubleParameterName.T1, "Starting temperature");
+		createDoubleField(DoubleParameterName.T2, "Ending temperature");
+		createDoubleField(DoubleParameterName.Cn, "Cn");
+		createDoubleField(DoubleParameterName.Cp, "Cp");
+		createDoubleField(DoubleParameterName.T0n, "T0n");
+		createDoubleField(DoubleParameterName.T0p, "T0p");
+		createBooleanField(BooleanParameterName.reverseT, "1/T");
+		createBooleanField(BooleanParameterName.logScale, "Logarithmic scale");
 		createButton("Apply", "apply");
 	}
 	
@@ -167,19 +186,12 @@ public class InputBar extends JPanel implements ActionListener, Observer {
 				error("Starting temperature should be less than ending temperature");
 				return;
 			}
-			params.setDouble(DoubleParameterName.Eg, Eg);
-			params.setDouble(DoubleParameterName.Ed1, Ed1);
-			params.setDouble(DoubleParameterName.Ed2, Ed2);
-			params.setDouble(DoubleParameterName.Nd1, Nd1);
-			params.setDouble(DoubleParameterName.Nd2, Nd2);
-			params.setDouble(DoubleParameterName.me, me);
-			params.setDouble(DoubleParameterName.mh, mh);
-			params.setDouble(DoubleParameterName.T1, T1);
-			params.setDouble(DoubleParameterName.T2, T2);
-			params.setDouble(DoubleParameterName.Cn, Cn);
-			params.setDouble(DoubleParameterName.Cp, Cp);
-			params.setDouble(DoubleParameterName.T0n, T0n);
-			params.setDouble(DoubleParameterName.T0p, T0p);
+			
+			for (DoubleParameterName name : doubleFields.keySet())
+			{
+				updateEntry(name);
+			}
+			
 			params.setBoolean(BooleanParameterName.logScale, getBoolean(BooleanParameterName.logScale));
 			params.setBoolean(BooleanParameterName.reverseT, getBoolean(BooleanParameterName.reverseT));
 			params.update();
@@ -192,7 +204,9 @@ public class InputBar extends JPanel implements ActionListener, Observer {
 		// TODO Auto-generated method stub
 		for (DoubleParameterName name : doubleFields.keySet())
 		{
-			doubleFields.get(name).setValue(params.getDouble(name));
+			DoubleParameterEntry d = params.getDoubleEntry(name);
+			doubleFields.get(name).setValue(d.getValue());
+			doubleUnits.get(name).setSelectedIndex(d.getUnit());
 		}
 	}
 }
