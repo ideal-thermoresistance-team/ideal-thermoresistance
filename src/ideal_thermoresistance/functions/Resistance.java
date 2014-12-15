@@ -49,8 +49,14 @@ public class Resistance implements Function {
 				(Nd1_c + Nd2_c + n)*Math.pow(T0p/T, 1.5));
 		
 		double sigma = e * (n*mu_n + p*mu_p);
+		double rho = 1 / sigma;
+		// Conversion to (Om * cm):
+		rho *= 8.98755e9 / 100;
 		
-		return 1/sigma;
+		return Math.max(0, rho);
 	}
 
+	public String getUnits() {
+		return "Om∙cm";
+	}
 }

@@ -19,7 +19,11 @@ public class ElectronsConcentration implements Function {
 		
 		double root = fermi_level.compute(params, T);
 		
-		return NC * root * Math.exp(Eg / (k*T));
+		return Math.max(0, NC * root * Math.exp(Eg / (k*T)));
+	}
+
+	public String getUnits() {
+		return "cm^-3";
 	}
 
 }
