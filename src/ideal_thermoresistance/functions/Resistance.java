@@ -53,7 +53,10 @@ public class Resistance implements Function {
 		// Conversion to (Om * cm):
 		rho *= 8.98755e9 / 100;
 		
-		return rho;
+		return Math.max(0, rho);
 	}
 
+	public String getUnits() {
+		return "Om∙cm";
+	}
 }

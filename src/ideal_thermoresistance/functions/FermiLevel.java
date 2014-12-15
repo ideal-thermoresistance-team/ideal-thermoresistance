@@ -53,4 +53,7 @@ public class FermiLevel implements Function {
 		return root / q0;
 	}
 
+	public String getUnits() {
+		return "";
+	}
 }
