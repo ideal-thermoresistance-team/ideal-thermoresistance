@@ -8,6 +8,8 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -17,12 +19,13 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import ideal_thermoresistance.functions.ElectronsConcentration;
 import ideal_thermoresistance.parameters.BooleanParameterName;
 import ideal_thermoresistance.parameters.DoubleParameterName;
 import ideal_thermoresistance.parameters.Parameters;
 import ideal_thermoresistance.parameters.Unit;
 
-public class InputBar extends JPanel implements ActionListener {
+public class InputBar extends JPanel implements ActionListener, Observer {
 	private static final long serialVersionUID = 1L;
 	private HashMap<DoubleParameterName, JFormattedTextField> doubleFields;
 	private HashMap<DoubleParameterName, JComboBox<Unit>> doubleUnits;
@@ -89,6 +92,7 @@ public class InputBar extends JPanel implements ActionListener {
 		booleanFields = new HashMap<>();
 		
 		this.params = params;
+		params.addObserver(this);
 		setLayout(new GridLayout(0, 3));
 		setPreferredSize(new Dimension(defaultWidth, defaultHeight));
 		createDoubleField(DoubleParameterName.Eg, "Energy gap", 
@@ -179,8 +183,16 @@ public class InputBar extends JPanel implements ActionListener {
 			params.setBoolean(BooleanParameterName.logScale, getBoolean(BooleanParameterName.logScale));
 			params.setBoolean(BooleanParameterName.reverseT, getBoolean(BooleanParameterName.reverseT));
 			params.update();
-			
 		}
 		
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		// TODO Auto-generated method stub
+		for (DoubleParameterName name : doubleFields.keySet())
+		{
+			doubleFields.get(name).setValue(params.getDouble(name));
+		}
 	}
 }
