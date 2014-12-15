@@ -99,8 +99,8 @@ public class Main extends JFrame implements ActionListener{
 	{
 		params.setDouble(DoubleParameterName.Eg, 1.12, Unit.eV.getPos());
 		
-		params.setDouble(DoubleParameterName.me, 0.98, Unit.me.getPos());
-		params.setDouble(DoubleParameterName.mh, 0.49, Unit.me.getPos());
+		params.setDouble(DoubleParameterName.me, 0.36, Unit.me.getPos());
+		params.setDouble(DoubleParameterName.mh, 0.81, Unit.me.getPos());
 				
 		params.setDouble(DoubleParameterName.Cn, 1, Unit.constants.getPos());
 		params.setDouble(DoubleParameterName.Cp, 1, Unit.constants.getPos());
@@ -113,8 +113,8 @@ public class Main extends JFrame implements ActionListener{
 	{
 		params.setDouble(DoubleParameterName.Eg, 0.661, Unit.eV.getPos());
 		
-		params.setDouble(DoubleParameterName.me, 1.6, Unit.me.getPos());
-		params.setDouble(DoubleParameterName.mh, 0.33, Unit.me.getPos());
+		params.setDouble(DoubleParameterName.me, 0.22, Unit.me.getPos());
+		params.setDouble(DoubleParameterName.mh, 0.34, Unit.me.getPos());
 				
 		params.setDouble(DoubleParameterName.Cn, 1, Unit.constants.getPos());
 		params.setDouble(DoubleParameterName.Cp, 1, Unit.constants.getPos());
