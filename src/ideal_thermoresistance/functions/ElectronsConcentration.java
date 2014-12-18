@@ -17,9 +17,9 @@ public class ElectronsConcentration implements Function {
 		
 		double NC = 2.51e19 * Math.pow(me/m0 * T/300, 1.5);
 		
-		double root = fermi_level.compute(params, T);
+		double root = fermi_level.getExp(params, T);
 		
-		return Math.max(0, NC * root * Math.exp(Eg / (k*T)));
+		return NC * root * Math.exp(Eg / (k*T));
 	}
 
 	public String getUnits() {

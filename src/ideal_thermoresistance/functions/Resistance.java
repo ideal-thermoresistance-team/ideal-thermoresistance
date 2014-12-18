@@ -29,7 +29,7 @@ public class Resistance implements Function {
 		double q1 = Math.exp((Eg-Ed1) / (k*T));
 		double q2 = Math.exp((Eg-Ed2) / (k*T));
 		
-		double root = fermi_level.compute(params, T);
+		double root = fermi_level.getExp(params, T);
 		
 		double n = NC * root / q0;
 		double p = NV / root;
@@ -53,10 +53,10 @@ public class Resistance implements Function {
 		// Conversion to (Om * cm):
 		rho *= 8.98755e9 / 100;
 		
-		return Math.max(0, rho);
+		return rho;
 	}
 
 	public String getUnits() {
-		return "Om∙cm";
+		return "Om*cm";
 	}
 }
