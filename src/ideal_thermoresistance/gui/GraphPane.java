@@ -1,6 +1,8 @@
 package ideal_thermoresistance.gui;
 
 import ideal_thermoresistance.functions.ElectronsConcentration;
+import ideal_thermoresistance.functions.FermiError;
+import ideal_thermoresistance.functions.FermiLevel;
 import ideal_thermoresistance.functions.Function;
 import ideal_thermoresistance.functions.Resistance;
 import ideal_thermoresistance.parameters.BooleanParameterName;
@@ -32,7 +34,7 @@ public class GraphPane extends JFrame implements Observer {
 	public static final int defaultHeight = 300, defaultWidth = 400;
 	
 	private JTabbedPane tp;
-	private JPanel pElectronsConcentration, pResistance;//, pFermi;
+	private JPanel pElectronsConcentration, pResistance, pFermi;
 	Parameters params;
 	
 	public GraphPane(Parameters params) {
@@ -42,10 +44,10 @@ public class GraphPane extends JFrame implements Observer {
 		getContentPane().add(tp);
 		pElectronsConcentration = initPanel();
 		pResistance  = initPanel();
-		//pFermi = initPanel();
+		pFermi = initPanel();
 		tp.addTab("Electrons concentration", pElectronsConcentration);
 		tp.addTab("Resistivity", pResistance);
-		//tp.addTab("F", pFermi);
+		tp.addTab("Fermi level", pFermi);
 		setVisible(false);
 		
 		setSize(500, 500);
@@ -61,10 +63,10 @@ public class GraphPane extends JFrame implements Observer {
 	private void recompute() {
 		pResistance.removeAll();
 		pElectronsConcentration.removeAll();
-		//pFermi.removeAll();
+		pFermi.removeAll();
 		pElectronsConcentration.add(makePanel(new ElectronsConcentration(), "N"));
-		pResistance.add(makePanel(new Resistance(), "ρ"));
-	    //pFermi.add(makePanel(new FermiLevel(), "F"));
+		pResistance.add(makePanel(new Resistance(), "rho"));
+	    pFermi.add(makePanel(new FermiLevel(), "F"));
 	}
 	
 	private ChartPanel makePanel(Function func, String str) {
@@ -75,13 +77,13 @@ public class GraphPane extends JFrame implements Observer {
 	    	strT = "1/T";
     		chartStr = str + "(1/T)";
     		series = new XYSeries(chartStr); 
-    		for(double i = params.getDouble(DoubleParameterName.T2); i >= params.getDouble(DoubleParameterName.T1); i-=10){
+    		for(double i = params.getDouble(DoubleParameterName.T2); i >= params.getDouble(DoubleParameterName.T1); i-=5){
     			series.add(1/i, func.compute(params, i));
     		}
 	    } else {
 	    	chartStr = str + "(T)";
 	    	series = new XYSeries(chartStr);
-			for(double i = params.getDouble(DoubleParameterName.T1); i < params.getDouble(DoubleParameterName.T2); i+=10){
+			for(double i = params.getDouble(DoubleParameterName.T1); i < params.getDouble(DoubleParameterName.T2); i+=5){
 	    		series.add(i, func.compute(params, i));
 	    	}
 	    }
@@ -92,16 +94,25 @@ public class GraphPane extends JFrame implements Observer {
 	        .createXYLineChart(chartStr, strT, strFunc, xyDataset, PlotOrientation.VERTICAL, true, true, true);
 	    XYPlot plot = (XYPlot) chart.getPlot();
 	    
-	    if (params.getBoolean(BooleanParameterName.logScale) && plot.getRangeAxis().getRange().getLowerBound() >= 0) {
+	    double len = series.getMaxY() - series.getMinY();
+	    
+	    if (params.getBoolean(BooleanParameterName.logScale)) {// && plot.getRangeAxis().getRange().getLowerBound() >= 0) {
 	    	LogarithmicAxis ax = new LogarithmicAxis(str);
-	    	ax.setNumberFormatOverride(new DecimalFormat("0.###E0"));
+	    	if (len > 0)
+	    		ax.setRange(series.getMinY(), series.getMaxY());
+	    	ax.setExpTickLabelsFlag(true);
+	    	ax.setTickUnit(new NumberTickUnit(len / 15, new DecimalFormat("0.###E0")));
 	    	plot.setRangeAxis(ax);
 	    }
 	    else {
 	    	NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
 		    // FIXME: Due to the unexpected behavior of JFreeChart (not showing the Y axis values for too big numbers),
 		    // the number of ticks on the vertical axis is set to 15.
-		    yAxis.setTickUnit(new NumberTickUnit(yAxis.getRange().getLength() / 15, new DecimalFormat("0.###E0")));
+	    	//yAxis.setRange(0, series.getMaxY());
+	    	if (len > 0) {
+	    		yAxis.setRange(series.getMinY(), series.getMaxY());
+	    		yAxis.setTickUnit(new NumberTickUnit(len / 15, new DecimalFormat("0.###E0")));
+	    	}
 	    }
 	    
 	    ChartPanel panel = new ChartPanel(chart);
