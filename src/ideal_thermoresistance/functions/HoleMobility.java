@@ -32,11 +32,14 @@ public class HoleMobility implements Function {
 		// Share of charged particles:
 		double Nd1_c = Nd1 / (1 + q1 / root);
 		double Nd2_c = Nd2 / (1 + q2 / root);
+		Nd1_c *= 1e6;
+		Nd2_c *= 1e6;
+		n     *= 1e6;
 		
-		double Cp = params.getDouble(DoubleParameterName.Cn);
+		double Cp = params.getDouble(DoubleParameterName.Cp);
 		double T0p = params.getDouble(DoubleParameterName.T0p);
 		
-		// TODO: These formulae are operated in International System of Units
+		// This formula is written in International System of Units
 		double mu_p = Cp / (Math.pow(T/T0p, 1.5) + 
 				(Nd1_c + Nd2_c + n)*Math.pow(T0p/T, 1.5));
 		
@@ -44,6 +47,12 @@ public class HoleMobility implements Function {
 	}
 
 	public String getUnits() {
-		return "Om*cm";
+		return "m^2 / (V*s)";
+	}
+	public String getLongName() {
+		return "Hole mobility";
+	}
+	public String getName() {
+		return "mu_p";
 	}
 }

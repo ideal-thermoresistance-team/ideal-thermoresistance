@@ -31,11 +31,14 @@ public class ElectronMobility implements Function {
 		// Share of charged particles:
 		double Nd1_c = Nd1 / (1 + q1 / root);
 		double Nd2_c = Nd2 / (1 + q2 / root);
+		Nd1_c *= 1e6;
+		Nd2_c *= 1e6;
+		p     *= 1e6;
 		
 		double Cn = params.getDouble(DoubleParameterName.Cn);
 		double T0n = params.getDouble(DoubleParameterName.T0n);
 		
-		// TODO: These formulae are operated in International System of Units
+		// This formula is written in International System of Units
 		double mu_n = Cn / (Math.pow(T/T0n, 1.5) + 
 				(Nd1_c + Nd2_c + p)*Math.pow(T0n/T, 1.5));
 		
@@ -43,6 +46,12 @@ public class ElectronMobility implements Function {
 	}
 
 	public String getUnits() {
-		return "Om*cm";
+		return "m^2 / (V*s)";
+	}
+	public String getLongName() {
+		return "Electron mobility";
+	}
+	public String getName() {
+		return "mu_n";
 	}
 }

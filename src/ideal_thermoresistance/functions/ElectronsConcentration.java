@@ -25,5 +25,11 @@ public class ElectronsConcentration implements Function {
 	public String getUnits() {
 		return "cm^-3";
 	}
+	public String getLongName() {
+		return "Electrons concentration";
+	}
+	public String getName() {
+		return "n";
+	}
 
 }

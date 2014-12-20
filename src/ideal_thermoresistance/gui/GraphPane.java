@@ -1,9 +1,10 @@
 package ideal_thermoresistance.gui;
 
+import ideal_thermoresistance.functions.ElectronMobility;
 import ideal_thermoresistance.functions.ElectronsConcentration;
-import ideal_thermoresistance.functions.FermiError;
 import ideal_thermoresistance.functions.FermiLevel;
 import ideal_thermoresistance.functions.Function;
+import ideal_thermoresistance.functions.HoleMobility;
 import ideal_thermoresistance.functions.Resistance;
 import ideal_thermoresistance.parameters.BooleanParameterName;
 import ideal_thermoresistance.parameters.DoubleParameterName;
@@ -34,7 +35,13 @@ public class GraphPane extends JFrame implements Observer {
 	public static final int defaultHeight = 300, defaultWidth = 400;
 	
 	private JTabbedPane tp;
-	private JPanel pElectronsConcentration, pResistance, pFermi;
+	private static final Function[] functions = {
+		new ElectronsConcentration(),
+		new Resistance(),
+		new FermiLevel(),
+		new ElectronMobility(),
+		new HoleMobility()};
+	private JPanel[] graph_panel = new JPanel[functions.length];
 	Parameters params;
 	
 	public GraphPane(Parameters params) {
@@ -42,12 +49,11 @@ public class GraphPane extends JFrame implements Observer {
 		setTitle("Graph");
 		tp = new JTabbedPane();
 		getContentPane().add(tp);
-		pElectronsConcentration = initPanel();
-		pResistance  = initPanel();
-		pFermi = initPanel();
-		tp.addTab("Electrons concentration", pElectronsConcentration);
-		tp.addTab("Resistivity", pResistance);
-		tp.addTab("Fermi level", pFermi);
+		for (int i = 0; i < functions.length; i++)
+		{
+			graph_panel[i] = initPanel();
+			tp.addTab(functions[i].getLongName(), graph_panel[i]);
+		}
 		setVisible(false);
 		
 		setSize(500, 500);
@@ -61,12 +67,11 @@ public class GraphPane extends JFrame implements Observer {
 	}
 
 	private void recompute() {
-		pResistance.removeAll();
-		pElectronsConcentration.removeAll();
-		pFermi.removeAll();
-		pElectronsConcentration.add(makePanel(new ElectronsConcentration(), "N"));
-		pResistance.add(makePanel(new Resistance(), "rho"));
-	    pFermi.add(makePanel(new FermiLevel(), "F"));
+		for (int i = 0; i < functions.length; i++)
+		{
+			graph_panel[i].removeAll();
+			graph_panel[i].add(makePanel(functions[i], functions[i].getName()));
+		}
 	}
 	
 	private ChartPanel makePanel(Function func, String str) {
@@ -96,7 +101,7 @@ public class GraphPane extends JFrame implements Observer {
 	    
 	    double len = series.getMaxY() - series.getMinY();
 	    
-	    if (params.getBoolean(BooleanParameterName.logScale)) {// && plot.getRangeAxis().getRange().getLowerBound() >= 0) {
+	    if (params.getBoolean(BooleanParameterName.logScale)) {
 	    	LogarithmicAxis ax = new LogarithmicAxis(str);
 	    	if (len > 0)
 	    		ax.setRange(series.getMinY(), series.getMaxY());
@@ -106,9 +111,8 @@ public class GraphPane extends JFrame implements Observer {
 	    }
 	    else {
 	    	NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
-		    // FIXME: Due to the unexpected behavior of JFreeChart (not showing the Y axis values for too big numbers),
+		    // Due to the unexpected behavior of JFreeChart (not showing the Y axis values for too big numbers),
 		    // the number of ticks on the vertical axis is set to 15.
-	    	//yAxis.setRange(0, series.getMaxY());
 	    	if (len > 0) {
 	    		yAxis.setRange(series.getMinY(), series.getMaxY());
 	    		yAxis.setTickUnit(new NumberTickUnit(len / 15, new DecimalFormat("0.###E0")));

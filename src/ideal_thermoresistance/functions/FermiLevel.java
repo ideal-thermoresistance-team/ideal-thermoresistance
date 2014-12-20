@@ -199,4 +199,10 @@ public class FermiLevel implements Function {
 	public String getUnits() {
 		return "eV";
 	}
+	public String getLongName() {
+		return "Fermi level";
+	}
+	public String getName() {
+		return "mu";
+	}
 }

@@ -42,7 +42,12 @@ public class Resistance implements Function {
 		double T0n = params.getDouble(DoubleParameterName.T0n);
 		double T0p = params.getDouble(DoubleParameterName.T0p);
 		
-		// TODO: These formulae are operated in International System of Units
+		Nd1_c *= 10e-9;
+		Nd2_c *= 10e-9;
+		n     *= 10e-9;
+		p     *= 10e-9;
+		
+		// These formulae are written in International System of Units
 		double mu_n = Cn / (Math.pow(T/T0n, 1.5) + 
 				(Nd1_c + Nd2_c + p)*Math.pow(T0n/T, 1.5));
 		double mu_p = Cp / (Math.pow(T/T0p, 1.5) + 
@@ -58,5 +63,11 @@ public class Resistance implements Function {
 
 	public String getUnits() {
 		return "Om*cm";
+	}
+	public String getLongName() {
+		return "Resistivity";
+	}
+	public String getName() {
+		return "rho";
 	}
 }
