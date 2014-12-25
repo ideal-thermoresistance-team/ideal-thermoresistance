@@ -8,7 +8,7 @@ public enum Unit {
 	// Mass
 	g("g", 1, 0),
 	kg("kg", 1000, 1),
-	me("me", 9.1093829140404040404e-31, 2),
+	me("me", 9.1093829140404040404e-28, 2),
 	// Temperature
 	K("K", 1., 0),
 	// Concentration
