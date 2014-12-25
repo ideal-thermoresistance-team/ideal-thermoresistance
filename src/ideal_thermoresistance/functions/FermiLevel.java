@@ -2,6 +2,7 @@ package ideal_thermoresistance.functions;
 
 import ideal_thermoresistance.parameters.DoubleParameterName;
 import ideal_thermoresistance.parameters.Parameters;
+import ideal_thermoresistance.parameters.Unit;
 
 /**
  * Attention! The function returns not the actual fermi level, but exp(mu / (k*T)).
@@ -40,18 +41,17 @@ public class FermiLevel implements Function {
 	}
 	
 	private double approximate(Parameters params, double T) {
-		double e = 1.6e-12;
-		double Eg = params.getDouble(DoubleParameterName.Eg) / e;
-		double Ed1 = params.getDouble(DoubleParameterName.Ed1) / e;
-		double Ed2 = params.getDouble(DoubleParameterName.Ed2) / e;
+		double Eg = params.getDouble(DoubleParameterName.Eg);
+		double Ed1 = params.getDouble(DoubleParameterName.Ed1);
+		double Ed2 = params.getDouble(DoubleParameterName.Ed2);
 		double Nd1 = params.getDouble(DoubleParameterName.Nd1);
 		double Nd2 = params.getDouble(DoubleParameterName.Nd2);
 		
 		double me = params.getDouble(DoubleParameterName.me);
 		double mh = params.getDouble(DoubleParameterName.mh);
 		
-		double k  = 8.617e-5;
-		double m0 = 9.1e-28;
+		double k  = 1.380648813131313e-16;
+		double m0 = Unit.me.value();
 		
 		double NC = 2.51e19 * Math.pow(me/m0 * T/300, 1.5);
 		double NV = 2.51e19 * Math.pow(mh/m0 * T/300, 1.5);
@@ -73,8 +73,8 @@ public class FermiLevel implements Function {
 			double n = NC * x / q0;
 			double p = NV / x;
 			
-			double Nd1_c_deriv = Nd1/(x+q0*q1)-Nd1*x/(x+q0*q1)/(x+q0*q1);
-			double Nd2_c_deriv = Nd2/(x+q0*q2)-Nd2*x/(x+q0*q2)/(x+q0*q2);
+			double Nd1_c_deriv = Nd1*q0*q1/(x+q0*q1)/(x+q0*q1);
+			double Nd2_c_deriv = q0*q2*Nd2/(x+q0*q2)/(x+q0*q2);
 			double n_deriv = NC / q0;
 			double p_deriv = -NV / x / x;
 			

@@ -2,6 +2,7 @@ package ideal_thermoresistance.functions;
 
 import ideal_thermoresistance.parameters.DoubleParameterName;
 import ideal_thermoresistance.parameters.Parameters;
+import ideal_thermoresistance.parameters.Unit;
 
 public class Resistance implements Function {
 
@@ -19,8 +20,8 @@ public class Resistance implements Function {
 		
 		// TODO: Move constants to the happier land.
 		double k  = 1.38e-16;
-		double m0 = 9.1e-28;
-		double e  = 4.8e-10; // Is it CGS? 
+		double m0 = Unit.me.value();
+		double e  = 1.6e-19; 
 		
 		double NC = 2.51e19 * Math.pow(me/m0 * T/300, 1.5);
 		double NV = 2.51e19 * Math.pow(mh/m0 * T/300, 1.5);
@@ -42,10 +43,10 @@ public class Resistance implements Function {
 		double T0n = params.getDouble(DoubleParameterName.T0n);
 		double T0p = params.getDouble(DoubleParameterName.T0p);
 		
-		Nd1_c *= 10e-9;
-		Nd2_c *= 10e-9;
-		n     *= 10e-9;
-		p     *= 10e-9;
+		Nd1_c *= 1e6;
+		Nd2_c *= 1e6;
+		n     *= 1e6;
+		p     *= 1e6;
 		
 		// These formulae are written in International System of Units
 		double mu_n = Cn / (Math.pow(T/T0n, 1.5) + 
@@ -56,7 +57,7 @@ public class Resistance implements Function {
 		double sigma = e * (n*mu_n + p*mu_p);
 		double rho = 1 / sigma;
 		// Conversion to (Om * cm):
-		rho *= 8.98755e9 / 100;
+		rho *= 0.01;
 		
 		return rho;
 	}

@@ -2,6 +2,7 @@ package ideal_thermoresistance.functions;
 
 import ideal_thermoresistance.parameters.DoubleParameterName;
 import ideal_thermoresistance.parameters.Parameters;
+import ideal_thermoresistance.parameters.Unit;
 
 public class ElectronMobility implements Function {
 
@@ -18,7 +19,7 @@ public class ElectronMobility implements Function {
 		
 		// TODO: Move constants to the happier land.
 		double k  = 1.38e-16;
-		double m0 = 9.1e-28;
+		double m0 = Unit.me.value();
 		
 		double NV = 2.51e19 * Math.pow(mh/m0 * T/300, 1.5);
 		
