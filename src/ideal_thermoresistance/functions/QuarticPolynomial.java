@@ -1,5 +1,8 @@
 package ideal_thermoresistance.functions;
 
+import ideal_thermoresistance.math.ZeroFinder;
+import ideal_thermoresistance.math.ZeroFinder.DoubleFunction;
+
 /**
  * Polynomial of form x^4 + a*x^3 + b*x^2 + cx + d;
  */
@@ -11,7 +14,6 @@ public class QuarticPolynomial {
 	
 	private double sqrt(double d) {
 		return Math.sqrt(d);
-		//return Math.sqrt(Math.abs(d));
 	}
 	
 	public QuarticPolynomial(double a, double b, double c, double d) {
@@ -45,15 +47,15 @@ public class QuarticPolynomial {
 			double[] z_roots = aux_poly.getRoots();
 			double z = 0;
 			for (int i = 0; i < z_roots.length; ++i) {
-				if (!Double.isNaN(z_roots[i]) && z_roots[i] > 0)
+				if (!Double.isNaN(z_roots[i]) && z_roots[i] > 0) {
 					z = z_roots[i];
+				}
 			}
 			if (z == 0) {
-				//System.out.println("Z is 0");
+				//debugPrint("Z is 0");
 				return roots;
 			}
 			
-			//System.out.println(q/2/Math.sqrt(2*z));
 			roots[0] = Math.sqrt(2*z) - sqrt(2*z - 4*(p/2 + z + q/2/Math.sqrt(2*z)));
 			roots[0] /= 2;
 			roots[1] = Math.sqrt(2*z) + sqrt(2*z - 4*(p/2 + z + q/2/Math.sqrt(2*z)));
@@ -64,15 +66,53 @@ public class QuarticPolynomial {
 			roots[3] /= 2;
 		}
 		
-		System.out.println("==== QUARTIC EQUATION ERRORS ====");
+//		debugPrint("Coefs " + a + " " + b + " " + c + " " + d);
+		debugPrint("==== QUARTIC EQUATION ERRORS ====");
 		
-		//System.out.println("0: " + (Math.pow(roots[0], 4) + p*Math.pow(roots[0], 2) + q*roots[0] + r));
+		//debugPrint("0: " + (Math.pow(roots[0], 4) + p*Math.pow(roots[0], 2) + q*roots[0] + r));
 		for (int i = 0; i < roots.length; ++i) {
 			roots[i] -= a/4;
 			double temp = (Math.pow(roots[i], 4) + a*Math.pow(roots[i], 3) + b*Math.pow(roots[i], 2) + c*roots[i] + d);
-			System.out.println("Error for root " + i + "(" + roots[i] + "): " + temp);
+			debugPrint("Error for root " + i + "(" + roots[i] + "): " + temp);
 		}
 		
 		return roots;
+	}
+	
+	public double[] getBestRoots() {
+		double[] roots = getRoots();
+		double[] app_roots = new double[roots.length];
+		
+		for (int i = 0; i < roots.length; ++i) {
+			app_roots[i] = approximateRoot(roots[i]);
+		}
+		
+		return app_roots;
+	}
+	
+	public double approximateRoot(double root_start) {
+		double ret = ZeroFinder.newtonsMethod(new DoubleFunction() {
+			public double compute(double x, double[] params) {
+				double a = params[0];
+				double b = params[1];
+				double c = params[2];
+				double d = params[3];
+				return Math.pow(x, 4) + a * Math.pow(x, 3) + 
+						b * Math.pow(x, 2) + c * x + d;
+			}
+		}, new DoubleFunction() {
+			public double compute(double x, double[] params) {
+				double a = params[0];
+				double b = params[1];
+				double c = params[2];
+				return 4*Math.pow(x, 3) + 3*a * Math.pow(x, 2) + 
+						2*b * x + c;
+			}
+		}, root_start, new double[]{a, b, c, d});
+		return ret;
+	}
+	
+	private void debugPrint(String s) {
+		//System.out.println(s);
 	}
 }

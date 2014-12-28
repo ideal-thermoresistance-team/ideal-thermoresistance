@@ -1,5 +1,8 @@
 package ideal_thermoresistance.functions;
 
+import ideal_thermoresistance.math.ZeroFinder;
+import ideal_thermoresistance.math.ZeroFinder.DoubleFunction;
+
 /**
  * Polynomial of form x^3 + a*x^2 + b*x + c;
  */
@@ -49,6 +52,35 @@ public class CubicPolynomial {
 			}
 		}
 		
+		debugPrint("==== CUBIC EQUATION ERRORS ====");
+		
+		for (int i = 0; i < roots.length; ++i) {
+			double temp = (Math.pow(roots[i], 3) + a*Math.pow(roots[i], 2) + b*Math.pow(roots[i], 1) + c);
+			debugPrint("Error for root " + i + "(" + roots[i] + "): " + temp);
+		}
+		
 		return roots;
+	}
+	
+	public double approximateRoot(double root_start) {
+		double ret = ZeroFinder.newtonsMethod(new DoubleFunction() {
+			public double compute(double x, double[] params) {
+				double a = params[0];
+				double b = params[1];
+				double c = params[2];
+				return Math.pow(x, 3) + a * Math.pow(x, 2) + b * x + c;
+			}
+		}, new DoubleFunction() {
+			public double compute(double x, double[] params) {
+				double a = params[0];
+				double b = params[1];
+				return 3*Math.pow(x, 2) + a * 2 * x + b;
+			}
+		}, root_start, new double[]{a, b, c});
+		return ret;
+	}
+	
+	private void debugPrint(String s) {
+		//System.out.println(s);
 	}
 }
