@@ -17,7 +17,7 @@ public class ZeroFinder {
 		
 		double func_val, deriv_val;
 		func_val = deriv_val = 0;
-		int iter_count = 1500;
+		int iter_count = 150;
 		
 		/* Searching for root of the electroneutrality equation using Newton's algorithm */
 		
