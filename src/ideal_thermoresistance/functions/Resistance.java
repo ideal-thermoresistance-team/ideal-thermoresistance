@@ -43,18 +43,12 @@ public class Resistance implements Function {
 		double T0n = params.getDouble(DoubleParameterName.T0n);
 		double T0p = params.getDouble(DoubleParameterName.T0p);
 		
-		Nd1_c *= 1e6;
-		Nd2_c *= 1e6;
-		n     *= 1e6;
-		p     *= 1e6;
-		
-		// These formulae are written in International System of Units
 		double mu_n = Cn / (Math.pow(T/T0n, 1.5) + 
 				(Nd1_c + Nd2_c + p)*Math.pow(T0n/T, 1.5));
 		double mu_p = Cp / (Math.pow(T/T0p, 1.5) + 
 				(Nd1_c + Nd2_c + n)*Math.pow(T0p/T, 1.5));
 		
-		double sigma = e * (n*mu_n + p*mu_p);
+		double sigma = e * (n*mu_n + p*mu_p) * 1e6;
 		double rho = 1 / sigma;
 		// Conversion to (Om * cm):
 		rho *= 0.01;
