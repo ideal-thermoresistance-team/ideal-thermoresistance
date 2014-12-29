@@ -52,7 +52,6 @@ public class QuarticPolynomial {
 				}
 			}
 			if (z == 0) {
-				//debugPrint("Z is 0");
 				return roots;
 			}
 			
@@ -66,10 +65,9 @@ public class QuarticPolynomial {
 			roots[3] /= 2;
 		}
 		
-//		debugPrint("Coefs " + a + " " + b + " " + c + " " + d);
+		debugPrint("Quartic polynomial coefs " + a + " " + b + " " + c + " " + d);
 		debugPrint("==== QUARTIC EQUATION ERRORS ====");
 		
-		//debugPrint("0: " + (Math.pow(roots[0], 4) + p*Math.pow(roots[0], 2) + q*roots[0] + r));
 		for (int i = 0; i < roots.length; ++i) {
 			roots[i] -= a/4;
 			double temp = (Math.pow(roots[i], 4) + a*Math.pow(roots[i], 3) + b*Math.pow(roots[i], 2) + c*roots[i] + d);

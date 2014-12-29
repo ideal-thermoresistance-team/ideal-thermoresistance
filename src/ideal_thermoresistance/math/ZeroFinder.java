@@ -38,7 +38,7 @@ public class ZeroFinder {
 		
 		BigDecimal func_val, deriv_val;
 		func_val = deriv_val = bdm.toBD(0);
-		int iter_count = 5000;
+		int iter_count = 150;
 		
 		BigDecimal shift = null;
 		
@@ -50,11 +50,11 @@ public class ZeroFinder {
 			shift = bdm.div(func_val, deriv_val);
 			
 			x = bdm.sub( x, shift );
-		} while ((func_val.abs().doubleValue() > 1e-80 || shift.abs().doubleValue() > 1e-85) && --iter_count >= 0);
+		} while ((func_val.abs().doubleValue() > 1e-40 || shift.abs().doubleValue() > 1e-40) && --iter_count >= 0);
 		
 		debugPrint("=== Finished newton's method ===");
 		debugPrint("Last error: " + func_val.doubleValue());
-		debugPrint("Iter count: " + (10000 - iter_count));
+		debugPrint("Iter count: " + (150 - iter_count));
 		
 		return x;
 	}
@@ -63,7 +63,7 @@ public class ZeroFinder {
 		double x = root_start;
 		double x_prev = x;
 		
-		int iter_count = 10000;
+		int iter_count = 10;
 		
 		do {
 			x_prev = x;
@@ -77,7 +77,7 @@ public class ZeroFinder {
 		BigDecimal x = root_start;
 		BigDecimal x_prev = x;
 		
-		int iter_count = 5000;
+		int iter_count = 900;
 		
 		do {
 			x_prev = x;
@@ -86,11 +86,11 @@ public class ZeroFinder {
 				x = x_prev;
 				break;
 			}
-		} while ((bdm.sub(x, x_prev).abs().doubleValue() > 1e-25) && --iter_count >= 0);
+		} while ((bdm.sub(x, x_prev).abs().doubleValue() > 1e-5) && --iter_count >= 0);
 		
 		debugPrint("=== Finished iterations method ===");
 		debugPrint("Last error: " + bdm.sub(x.pow(2), params[0]).doubleValue());
-		debugPrint("Required " + (10000 - iter_count) + " iterations.");
+		debugPrint("Required " + (900 - iter_count) + " iterations.");
 		
 		return x;
 	}

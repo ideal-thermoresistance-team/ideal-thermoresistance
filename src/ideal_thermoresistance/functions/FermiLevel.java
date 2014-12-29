@@ -63,7 +63,6 @@ public class FermiLevel implements Function {
 		double root = 0;
 		
 		for (int i = 0; i < roots.length; ++i) {
-			if (root < 0 || root > 1) continue;
 			if (roots[i] > root && !Double.isNaN(roots[i])) {
 				root = roots[i];
 			}
@@ -72,7 +71,16 @@ public class FermiLevel implements Function {
 		/* If no root was found, via precise solution, approximation is done */
 		
 		if (root == 0) {
-			root = poly.approximateRoot(Math.sqrt(NV/q0/NC))*q0;
+			QuarticPolynomial2 poly2 = new QuarticPolynomial2(a, b, c, d);
+
+			double[] roots2 = poly2.getBestRoots();
+			
+			for (int i = 0; i < roots.length; ++i) {
+				if (roots2[i] > root && !Double.isNaN(roots2[i])) {
+					root = roots2[i];
+				}
+			}
+			root *= q0;
 			if (root <= 0) root = 1e-19;
 		}
 		else root *= q0;
