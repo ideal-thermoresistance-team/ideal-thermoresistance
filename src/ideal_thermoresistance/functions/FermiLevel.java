@@ -1,5 +1,6 @@
 package ideal_thermoresistance.functions;
 
+import ideal_thermoresistance.math.BigDecimalMath;
 import ideal_thermoresistance.parameters.DoubleParameterName;
 import ideal_thermoresistance.parameters.Parameters;
 import ideal_thermoresistance.parameters.Unit;
@@ -43,11 +44,19 @@ public class FermiLevel implements Function {
 		double q1 = Math.exp((-Ed1) / (k*T));
 		double q2 = Math.exp((-Ed2) / (k*T));
 		
+		if (Double.isInfinite(q0)) {
+			
+		}
+		
 		/* Calculating quartic polynomial coefficients */
 		
-		double a = NC*(q1 + q2) - (Nd1 + Nd2);
-		double b = (NC*q1*q2 - NV/q0) - (Nd1*q2 + Nd2*q1);
-		double c = -NV*(q1+q2)/q0;
+//		double a = NC*(q1 + q2) - (Nd1 + Nd2);
+//		double b = (NC*q1*q2 - NV/q0) - (Nd1*q2 + Nd2*q1);
+//		double c = -NV*(q1+q2)/q0;
+//		double d = -NV*q1*q2/q0;
+		double a = NC*(q1 + q2);
+		double b = (NC*q1*q2 - NV/q0) - (Nd1*q1 + Nd2*q2);
+		double c = -NV*(q1+q2)/q0 - (Nd1 + Nd2)*q1*q2;
 		double d = -NV*q1*q2/q0;
 		
 		a /= NC;
@@ -73,7 +82,13 @@ public class FermiLevel implements Function {
 		if (root == 0) {
 			QuarticPolynomial2 poly2 = new QuarticPolynomial2(a, b, c, d);
 
-			double[] roots2 = poly2.getBestRoots();
+			double[] roots2;
+			if (T > 120)
+				roots2 = poly2.getBestRoots();
+			else {
+				BigDecimalMath bdm = new BigDecimalMath();
+				roots2 = bdm.toDouble(poly2.getRoots());
+			}
 			
 			for (int i = 0; i < roots.length; ++i) {
 				if (roots2[i] > root && !Double.isNaN(roots2[i])) {
@@ -81,7 +96,7 @@ public class FermiLevel implements Function {
 				}
 			}
 			root *= q0;
-			if (root <= 0) root = 1e-19;
+			if (root <= 0) root = 1e5;
 		}
 		else root *= q0;
 		

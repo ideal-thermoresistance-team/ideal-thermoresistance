@@ -83,13 +83,19 @@ public class GraphPane extends JFrame implements Observer {
     		chartStr = str + "(1/T)";
     		series = new XYSeries(chartStr); 
     		for(double i = params.getDouble(DoubleParameterName.T2); i >= params.getDouble(DoubleParameterName.T1); i-=5){
-    			series.add(1/i, func.compute(params, i));
+    			if (params.getBoolean(BooleanParameterName.logScale))
+    				series.add(1/i, Math.log10(func.compute(params, i)));
+    			else
+    				series.add(1/i, func.compute(params, i));
     		}
 	    } else {
 	    	chartStr = str + "(T)";
 	    	series = new XYSeries(chartStr);
 			for(double i = params.getDouble(DoubleParameterName.T1); i < params.getDouble(DoubleParameterName.T2); i+=5){
-	    		series.add(i, func.compute(params, i));
+				if (params.getBoolean(BooleanParameterName.logScale))
+					series.add(i, Math.log10(func.compute(params, i)));
+				else
+					series.add(i, func.compute(params, i));
 	    	}
 	    }
 	    chartStr += ", " + func.getUnits();
@@ -101,15 +107,15 @@ public class GraphPane extends JFrame implements Observer {
 	    
 	    double len = series.getMaxY() - series.getMinY();
 	    
-	    if (params.getBoolean(BooleanParameterName.logScale)) {
-	    	LogarithmicAxis ax = new LogarithmicAxis(str);
-	    	if (len > 0)
-	    		ax.setRange(series.getMinY(), series.getMaxY());
-	    	ax.setExpTickLabelsFlag(true);
-	    	ax.setTickUnit(new NumberTickUnit(len / 15, new DecimalFormat("0.###E0")));
-	    	plot.setRangeAxis(ax);
-	    }
-	    else {
+//	    if (params.getBoolean(BooleanParameterName.logScale)) {
+//	    	LogarithmicAxis ax = new LogarithmicAxis(str);
+//	    	if (len > 0)
+//	    		ax.setRange(series.getMinY(), series.getMaxY());
+//	    	ax.setExpTickLabelsFlag(true);
+//	    	ax.setTickUnit(new NumberTickUnit(len / 15, new DecimalFormat("0.###E0")));
+//	    	plot.setRangeAxis(ax);
+//	    }
+//	    else {
 	    	NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
 		    // Due to the unexpected behavior of JFreeChart (not showing the Y axis values for too big numbers),
 		    // the number of ticks on the vertical axis is set to 15.
@@ -117,7 +123,7 @@ public class GraphPane extends JFrame implements Observer {
 	    		yAxis.setRange(series.getMinY(), series.getMaxY());
 	    		yAxis.setTickUnit(new NumberTickUnit(len / 15, new DecimalFormat("0.###E0")));
 	    	}
-	    }
+//	    }
 	    
 	    ChartPanel panel = new ChartPanel(chart);
 	    

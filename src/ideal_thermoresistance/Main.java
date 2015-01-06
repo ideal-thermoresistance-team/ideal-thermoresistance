@@ -76,7 +76,7 @@ public class Main extends JFrame implements ActionListener{
 		params.setDouble(DoubleParameterName.T1, 200, Unit.K.getPos());
 		params.setDouble(DoubleParameterName.T2, 400, Unit.K.getPos());
 		
-		params.setBoolean(BooleanParameterName.logScale, false);
+		params.setBoolean(BooleanParameterName.logScale, true);
 		params.setBoolean(BooleanParameterName.reverseT, false);
 		
 		loadSiliconParams();

@@ -38,7 +38,7 @@ public class ZeroFinder {
 		
 		BigDecimal func_val, deriv_val;
 		func_val = deriv_val = bdm.toBD(0);
-		int iter_count = 150;
+		int iter_count = 300;
 		
 		BigDecimal shift = null;
 		
@@ -49,8 +49,10 @@ public class ZeroFinder {
 			deriv_val = deriv.compute(x, params, bdm);
 			shift = bdm.div(func_val, deriv_val);
 			
+			if (deriv_val.signum() == 0) break;
+			
 			x = bdm.sub( x, shift );
-		} while ((func_val.abs().doubleValue() > 1e-40 || shift.abs().doubleValue() > 1e-40) && --iter_count >= 0);
+		} while ((func_val.abs().doubleValue() > 1e-90 || shift.abs().doubleValue() > 1e-90) && --iter_count >= 0);
 		
 		debugPrint("=== Finished newton's method ===");
 		debugPrint("Last error: " + func_val.doubleValue());
@@ -86,7 +88,7 @@ public class ZeroFinder {
 				x = x_prev;
 				break;
 			}
-		} while ((bdm.sub(x, x_prev).abs().doubleValue() > 1e-5) && --iter_count >= 0);
+		} while ((bdm.sub(x, x_prev).abs().doubleValue() > 1e-150) && --iter_count >= 0);
 		
 		debugPrint("=== Finished iterations method ===");
 		debugPrint("Last error: " + bdm.sub(x.pow(2), params[0]).doubleValue());

@@ -29,6 +29,9 @@ public class BigDecimalMath {
 	public BigDecimal div(BigDecimal d1, double d2) {
 		return div(d1, toBD(d2));
 	}
+	public BigDecimal div(double d1, BigDecimal d2) {
+		return div(toBD(d1), d2);
+	}
 	public BigDecimal add(BigDecimal d1, BigDecimal d2) {
 		return d1.add(d2);
 	}
@@ -42,6 +45,9 @@ public class BigDecimalMath {
 	public BigDecimal add(double d1, BigDecimal d2) {
 		return toBD(d1).add(d2);
 	}
+	public BigDecimal add(double d1, double d2) {
+		return add(d1, toBD(d2));
+	}
 	public BigDecimal sub(BigDecimal d1, BigDecimal d2) {
 		return d1.subtract(d2);
 	}
@@ -50,6 +56,9 @@ public class BigDecimalMath {
 	}
 	public BigDecimal mult(double d1, BigDecimal d2) {
 		return mult(toBD(d1), d2);
+	}
+	public BigDecimal mult(double d1, double d2) {
+		return mult(d1, toBD(d2));
 	}
 	
 	public BigDecimal sqrt(BigDecimal d) {
@@ -82,5 +91,47 @@ public class BigDecimalMath {
 
 	public BigDecimal pow(double a, int power) {
 		return toBD(a).pow(power);
+	}
+	public BigDecimal exp(double d) {
+//		return toBD(Math.exp(d));
+		return exp(toBD(d));
+	}
+	public BigDecimal exp(BigDecimal d) {
+		return expRK4(d);
+	}
+	private BigDecimal expRK4(BigDecimal d) {
+		double h = 1e-16;
+		int iter_count = 16576;
+		BigDecimal[] k = new BigDecimal[4];
+		BigDecimal alpha = div(d, toBD(iter_count*h));
+		BigDecimal temp = mult(h, alpha);
+		BigDecimal y = toBD(1);
+		
+		for (int i = 0; i < iter_count; ++i) {
+			k[0] = mult(temp, y);
+	        k[1] = mult(temp, add(y, div(k[0], 2.0)));
+	        k[2] = mult(temp, add(y, div(k[1], 2.0)));
+	        k[3] = mult(temp, add(y, k[2]));
+	        y = add(y, div(sum(new BigDecimal[]{
+	        	k[0],
+	        	mult(2, k[1]),
+	        	mult(2, k[2]),
+	        	k[3]
+	        }), 6.0));
+		}
+		
+		return y;
+	}
+
+	public double[] toDouble(BigDecimal[] roots) {
+		double[] ret = new double[roots.length];
+		for (int i = 0; i < ret.length; ++i) {
+			ret[i] = toDouble(roots[i]);
+		}
+		return ret;
+	}
+
+	public double toDouble(BigDecimal d) {
+		return d != null ? d.doubleValue() : Double.NaN;
 	}
 }
