@@ -88,7 +88,7 @@ public class ZeroFinder {
 				x = x_prev;
 				break;
 			}
-		} while ((bdm.sub(x, x_prev).abs().doubleValue() > 1e-150) && --iter_count >= 0);
+		} while ((bdm.sub(x, x_prev).abs().doubleValue() > 1e-210) && --iter_count >= 0);
 		
 		debugPrint("=== Finished iterations method ===");
 		debugPrint("Last error: " + bdm.sub(x.pow(2), params[0]).doubleValue());

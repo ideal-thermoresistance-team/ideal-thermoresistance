@@ -121,7 +121,8 @@ public class GraphPane extends JFrame implements Observer {
 		    // the number of ticks on the vertical axis is set to 15.
 	    	if (len > 0) {
 	    		yAxis.setRange(series.getMinY(), series.getMaxY());
-	    		yAxis.setTickUnit(new NumberTickUnit(len / 15, new DecimalFormat("0.###E0")));
+	    		if (!params.getBoolean(BooleanParameterName.logScale))
+	    			yAxis.setTickUnit(new NumberTickUnit(len / 15, new DecimalFormat("0.###E0")));
 	    	}
 //	    }
 	    

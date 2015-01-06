@@ -45,7 +45,7 @@ public class FermiLevel implements Function {
 		double q2 = Math.exp((-Ed2) / (k*T));
 		
 		if (Double.isInfinite(q0)) {
-			
+			return 1e100;
 		}
 		
 		/* Calculating quartic polynomial coefficients */
@@ -80,13 +80,14 @@ public class FermiLevel implements Function {
 		/* If no root was found, via precise solution, approximation is done */
 		
 		if (root == 0) {
+			System.out.println("T = " + T);
 			QuarticPolynomial2 poly2 = new QuarticPolynomial2(a, b, c, d);
+			BigDecimalMath bdm = new BigDecimalMath();
 
 			double[] roots2;
-			if (T > 120)
+			if (T > 150)
 				roots2 = poly2.getBestRoots();
 			else {
-				BigDecimalMath bdm = new BigDecimalMath();
 				roots2 = bdm.toDouble(poly2.getRoots());
 			}
 			
@@ -95,7 +96,13 @@ public class FermiLevel implements Function {
 					root = roots2[i];
 				}
 			}
+			
+			if (root <= 0) {
+				root = poly2.approximateRoot(bdm.toBD(1e47/q0)).doubleValue();
+			}
+			
 			root *= q0;
+			
 			if (root <= 0) root = 1e5;
 		}
 		else root *= q0;
