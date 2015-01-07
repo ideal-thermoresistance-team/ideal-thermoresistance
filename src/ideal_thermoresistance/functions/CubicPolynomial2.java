@@ -103,12 +103,14 @@ public class CubicPolynomial2 {
 		BigDecimal[] app_roots = new BigDecimal[bd_roots.length];
 		
 		for (int i = 0; i < app_roots.length; ++i) {
-			// TODO: This is not the best way to exclude negative coefficients.
+			// TODO: Negative coefficients are currently not excluded and thus needlessly approximated.
 			if (bd_roots[i] == null) {
 				app_roots[i] = null;
 				continue;
 			}
 			app_roots[i] = approximateRoot(bd_roots[i]);
+			if (app_roots[i].signum() <= 0)
+				app_roots[i] = bd_roots[i];
 		}
 		
 		return app_roots;

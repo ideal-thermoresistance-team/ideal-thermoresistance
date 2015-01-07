@@ -79,8 +79,15 @@ public class QuarticPolynomial2 {
 			}
 			
 			if (z.signum() == 0) {
+				for (int i = 0; i < z_roots.length; ++i) {
+					if (z_roots[i] != null && z_roots[i].signum() != 0) {
+						z = z_roots[i].abs();
+					}
+				}
 				//debugPrint("Z is 0");
-				return roots;
+				if (z.signum() == 0) {
+					return roots;
+				}
 			}
 			
 			temp = bdm.mult(2, z);
@@ -152,6 +159,7 @@ public class QuarticPolynomial2 {
 				continue;
 			}
 			app_roots[i] = approximateRoot(bd_roots[i]);
+//			app_roots[i] = approximateRoot(bd_roots[i].abs());
 		}
 		
 		return app_roots;

@@ -23,7 +23,9 @@ public class BigDecimalMath {
 	}
 	
 	public BigDecimal div(BigDecimal d1, BigDecimal d2) {
-		if (d2.signum() == 0) return null;
+//		if (d2.signum() == 0) return null;
+		// Absolutely horrible workaround for too small divisors.
+		if (d2.signum() == 0) return mult(1e40, d1);
 		return d1.divide(d2, 128, RoundingMode.HALF_UP);
 	}
 	public BigDecimal div(BigDecimal d1, double d2) {
@@ -93,15 +95,15 @@ public class BigDecimalMath {
 		return toBD(a).pow(power);
 	}
 	public BigDecimal exp(double d) {
-//		return toBD(Math.exp(d));
-		return exp(toBD(d));
+		return toBD(Math.exp(d));
+//		return exp(toBD(d));
 	}
 	public BigDecimal exp(BigDecimal d) {
 		return expRK4(d);
 	}
 	private BigDecimal expRK4(BigDecimal d) {
 		double h = 1e-16;
-		int iter_count = 16576;
+		int iter_count = 1024;
 		BigDecimal[] k = new BigDecimal[4];
 		BigDecimal alpha = div(d, toBD(iter_count*h));
 		BigDecimal temp = mult(h, alpha);
@@ -133,5 +135,9 @@ public class BigDecimalMath {
 
 	public double toDouble(BigDecimal d) {
 		return d != null ? d.doubleValue() : Double.NaN;
+	}
+
+	public BigDecimal sub(double d1, BigDecimal d2) {
+		return sub(toBD(d1), d2);
 	}
 }

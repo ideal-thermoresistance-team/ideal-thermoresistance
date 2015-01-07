@@ -56,7 +56,7 @@ public class ZeroFinder {
 		
 		debugPrint("=== Finished newton's method ===");
 		debugPrint("Last error: " + func_val.doubleValue());
-		debugPrint("Iter count: " + (150 - iter_count));
+		debugPrint("Iter count: " + (300 - iter_count));
 		
 		return x;
 	}
@@ -82,13 +82,15 @@ public class ZeroFinder {
 		int iter_count = 900;
 		
 		do {
+			if (x.signum() == 0)
+				break;
 			x_prev = x;
 			x = phi.compute(x, params, bdm);
 			if (x == null) {
 				x = x_prev;
 				break;
 			}
-		} while ((bdm.sub(x, x_prev).abs().doubleValue() > 1e-210) && --iter_count >= 0);
+		} while ((bdm.sub(x, x_prev).abs().doubleValue() > 1e-120) && --iter_count >= 0);
 		
 		debugPrint("=== Finished iterations method ===");
 		debugPrint("Last error: " + bdm.sub(x.pow(2), params[0]).doubleValue());

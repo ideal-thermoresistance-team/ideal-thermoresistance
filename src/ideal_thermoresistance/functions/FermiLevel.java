@@ -7,6 +7,7 @@ import ideal_thermoresistance.parameters.Unit;
 
 public class FermiLevel implements Function {
 	private static double k  = 1.380648813131313e-16;
+	private double prev_val = 1e15;
 	
     private double Eg;
     private double Ed1;
@@ -80,12 +81,12 @@ public class FermiLevel implements Function {
 		/* If no root was found, via precise solution, approximation is done */
 		
 		if (root == 0) {
-			System.out.println("T = " + T);
+//			System.out.println("T = " + T);
 			QuarticPolynomial2 poly2 = new QuarticPolynomial2(a, b, c, d);
 			BigDecimalMath bdm = new BigDecimalMath();
 
 			double[] roots2;
-			if (T > 150)
+			if (T > 180)
 				roots2 = poly2.getBestRoots();
 			else {
 				roots2 = bdm.toDouble(poly2.getRoots());
@@ -98,8 +99,12 @@ public class FermiLevel implements Function {
 			}
 			
 			if (root <= 0) {
-				root = poly2.approximateRoot(bdm.toBD(1e47/q0)).doubleValue();
+//				System.out.println("1/T = " + (1 / T));
+//				root = poly2.approximateRoot(bdm.toBD(1e47/q0)).doubleValue();
+				root = poly2.approximateRoot(bdm.toBD(1e35*prev_val)).doubleValue();
 			}
+			else
+				prev_val = root;
 			
 			root *= q0;
 			
